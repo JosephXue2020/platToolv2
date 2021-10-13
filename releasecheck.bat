@@ -1,0 +1,1 @@
+.\cmd\releasecheck\releasecheck.exe
