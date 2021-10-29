@@ -105,14 +105,24 @@ func ParseApiBytes(data []byte, meta *Meta) {
 		return
 	}
 
-	content := ""
+	contents := ""
 	contentinfo, ok := root["data"].(map[string]interface{})["contentinfo"]
 	if ok {
 		if contentinfo != nil {
-			content = contentinfo.([]interface{})[0].(map[string]interface{})["Content"].(string)
+			// contents = contentinfo.([]interface{})[0].(map[string]interface{})["Content"].(string)
+			slis := contentinfo.([]interface{})
+			for _, sli := range slis {
+				innerSli := sli.(map[string]interface{})
+				content := innerSli["Content"].(string)
+				name := innerSli["Name"]
+				if name != nil {
+					content = "<p>" + name.(string) + "</p>" + content
+				}
+				contents += content
+			}
 		}
 	}
-	meta.body = content
+	meta.body = contents
 
 	ref := ""
 	extendinfo, ok := root["data"].(map[string]interface{})["extendinfo"]
@@ -337,4 +347,17 @@ func TaskRun(inpath string, outpath string, docxpath string, timeout int, sleep 
 	// save to docx file
 	paras := CollectPara(res)
 	office.WriteDocxFile(docxpath, paras)
+}
+
+// a single run on the given url
+func SingleRun(url string, timeout int, sleep int) []string {
+	var res []string
+	req := NewRequest(url, timeout, sleep)
+	meta := req.GetMeta()
+
+	v := reflect.ValueOf(*meta)
+	for i := 0; i < v.NumField(); i++ {
+		res = append(res, v.Field(i).String())
+	}
+	return res
 }

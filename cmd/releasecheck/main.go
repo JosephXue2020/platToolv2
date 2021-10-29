@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"projects/platToolv2/internal/head"
 	"projects/platToolv2/internal/querypage"
 )
 
@@ -13,7 +14,8 @@ func main() {
 	// fmt.Print("\n")
 
 	inpath := "./template.xlsx"
-	outpath := "./data/result.xlsx"
+	suffix := head.TimeSuffix()
+	outpath := fmt.Sprintf("./data/releasecheck(%s).xlsx", suffix)
 	accuracy := "1"
 	field := "title"
 	scope := "all"

@@ -167,7 +167,7 @@ func (q *Query) GetInfo() *QueryReply {
 	var dataList []map[string]interface{}
 	err = GetDataList(byteData, &dataList)
 	if err != nil {
-		panic(err)
+		return infoPtr
 	}
 	var entries [][]string
 	presented := false
@@ -176,7 +176,9 @@ func (q *Query) GetInfo() *QueryReply {
 		t = head.DelTag(t)
 		wikiType, _ := v["wikiType"].(string)
 		twoSubjectName, _ := v["twoSubjectName"].(string)
-		entries = append(entries, []string{t, wikiType, twoSubjectName})
+		// ID
+		entryID, _ := v["ID"].(float64)
+		entries = append(entries, []string{t, wikiType, twoSubjectName, strconv.Itoa(int(entryID))})
 
 		if t == q.Word {
 			presented = true
@@ -272,4 +274,11 @@ func TaskRun(inpath string, outpath string, accuracy string, field string, scope
 	columns = append(columns, "是否上线", "结果总数", "前8项")
 	result = append([][]string{columns}, result...)
 	head.WriteExcel(outpath, result)
+}
+
+// run query function on one single entry name
+func SingleRun(word, accuracy, field, scope string, timeout int, sleep int) *QueryReply {
+	q := NewQuery(word, accuracy, field, scope, timeout, sleep)
+	info := q.GetInfo()
+	return info
 }

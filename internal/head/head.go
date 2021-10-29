@@ -198,3 +198,27 @@ func WriteExcel(path string, interf interface{}) (err error) {
 	}
 	return err
 }
+
+// 产生一个用来区分文件命名的后缀
+func TimeSuffix() string {
+	now := time.Now()
+	y, mth, d := now.Date()
+	// year
+	yStr := strconv.Itoa(y)
+	// month
+	mthStr := strconv.Itoa(int(mth))
+	// day
+	dStr := strconv.Itoa(d)
+	// hour
+	h := now.Hour()
+	hStr := strconv.Itoa(h)
+	// minute
+	m := now.Minute()
+	mStr := strconv.Itoa(m)
+	// second
+	s := now.Second()
+	sStr := strconv.Itoa(s)
+
+	suffix := yStr + mthStr + dStr + "-" + hStr + "-" + mStr + "-" + sStr
+	return suffix
+}
